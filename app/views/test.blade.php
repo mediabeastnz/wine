@@ -160,8 +160,8 @@
     </div>
 
 @section('scripts')
-{{ HTML::script('bower_components/jquery/dist/jquery.min.js') }}
-{{ HTML::script('bower_components/foundation/js/foundation.min.js') }}
+{{ HTML::script('packages/jquery/dist/jquery.min.js') }}
+{{ HTML::script('packages/foundation/js/foundation.min.js') }}
 {{ HTML::script('js/app.js') }}
 @show
 
