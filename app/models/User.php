@@ -7,7 +7,7 @@ use Illuminate\Auth\Reminders\RemindableInterface;
 
 class User extends Eloquent implements UserInterface, RemindableInterface {
 
-	use UserTrait, RemindableTrait;
+	use UserTrait, RemindableTrait,  SoftDeletingTrait;
 
 	/**
 	 * The database table used by the model.
@@ -22,5 +22,20 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	 * @var array
 	 */
 	protected $hidden = array('password', 'remember_token');
+
+	/**
+	* Does the database record have timestamps.
+	*
+	* @return boolean
+	*/
+	public $timestamps = true;
+
+	protected $dates = ['deleted_at'];
+
+
+	public function bottles()
+	{
+		return $this->hasMany('Bottle');
+	}
 
 }
