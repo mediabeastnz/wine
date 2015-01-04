@@ -23,22 +23,47 @@ class UserController extends BaseController {
   */
   public function store()
   {
-    $firstname = Input::get('firstname');
-    $lastname = Input::get('lastname');
-    $email = Input::get('email');
-    $password = Input::get('password');
 
-    $hashedPassword = Hash::make($password);
+    $rules = array(
+      'firstname'    => 'required',
+      'lastname'    => 'required',
+      'email'    => 'required|email',
+      'password' => 'required|min:5'
+    );
 
-    $user = new User;
-    $user->firstname = $firstname;
-    $user->lastname = $lastname;
-    $user->email = $email;
-    $user->password = $hashedPassword;
+    $validator = Validator::make(Input::all(), $rules);
 
-    $user->save();
+    if ($validator->fails()) {
+      // return errors
+      return Redirect::back()
+        ->withErrors($validator) // send back all errors to the login form
+        ->withInput(Input::except('password')); // send back the input (not the password) so that we can repopulate the form
 
-    return Redirect::to('users/create')->withErrors(['User created', 'msg']);
+    } else {
+      // store the user
+      $firstname = Input::get('firstname');
+      $lastname = Input::get('lastname');
+      $email = Input::get('email');
+      $password = Input::get('password');
+
+      $hashedPassword = Hash::make($password);
+
+      $user = new User;
+      $user->firstname = $firstname;
+      $user->lastname = $lastname;
+      $user->email = $email;
+      $user->password = $hashedPassword;
+
+      $user->save();
+
+      // log the user in
+      if (Auth::attempt(array("email" => $email, "password" => $password))) {
+        return Redirect::to('/');
+      }else{
+        return Redirect::to('login');
+      }
+
+    }
 
   }
 
@@ -54,8 +79,8 @@ class UserController extends BaseController {
 
     // validate the info, create rules for the inputs
     $rules = array(
-      'email'    => 'required|email', // make sure the email is an actual email
-      'password' => 'required|alphaNum|min:3' // password can only be alphanumeric and has to be greater than 3 characters
+      'email'    => 'required|email',
+      'password' => 'required|min:5'
     );
 
     // run the validation rules on the inputs from the form
@@ -63,7 +88,7 @@ class UserController extends BaseController {
 
     // if the validator fails, redirect back to the form
     if ($validator->fails()) {
-      return Redirect::to('login')
+      return Redirect::back()
       ->withErrors($validator) // send back all errors to the login form
       ->withInput(Input::except('password')); // send back the input (not the password) so that we can repopulate the form
     } else {
@@ -75,14 +100,9 @@ class UserController extends BaseController {
 
       // attempt to do the login
       if (Auth::attempt($userdata)) {
-        // validation successful!
-        // redirect them to the secure section or whatever
-        // return Redirect::to('secure');
-        // for now we'll just echo success (even though echoing in a controller is bad)
-        echo 'SUCCESS!';
+        return Redirect::to('/');
       } else {
-        // validation not successful, send back to form
-        return Redirect::to('login');
+        return Redirect::back();
       }
 
     }
