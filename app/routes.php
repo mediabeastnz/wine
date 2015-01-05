@@ -24,6 +24,10 @@ Route::get('test', function()
 // Route for creating users
 Route::get('users/create', array('as' => 'users/create', 'uses' => 'UserController@create'));
 Route::post('users/store', array('as' => 'users/store', 'uses' => 'UserController@store'));
+// User Account
+Route::get('users/account', array('as' => 'users/account', 'uses' => 'UserController@account'));
+Route::post('users/updateAccount', array('as' => 'users/updateAccount', 'uses' => 'UserController@updateAccount'));
+
 
 // route to show the login form and login
 Route::get('login', array('uses' => 'UserController@showLogin'));

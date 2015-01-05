@@ -26,7 +26,13 @@
         @if(Auth::check())
         <li><a href="/bottles/create">Add Bottle</a></li>
         <li><a href="/bottles">View Bottles</a></li>
-        <li><a href="/logout">Logout</a></li>
+        <li class="has-dropdown"><a href="#">{{Auth::User()->firstname}}</a>
+          <ul class="dropdown">
+            <li><a href="/users/account">Edit Account Details</a></li>
+            <li><a href="/logout">Logout</a></li>
+          </ul>
+        </li>
+
         @else
         <li><a href="/users/create">Register</a></li>
         <li><a href="/login">Login</a></li>

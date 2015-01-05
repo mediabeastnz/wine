@@ -6,6 +6,71 @@ class UserController extends BaseController {
 
   }
 
+  function account()
+  {
+
+    if(Auth::check())
+    {
+      return View::make('users.account')->with('user', Auth::user());
+    } else {
+      return Redirect::to('/');
+    }
+
+  }
+
+  public function updateAccount()
+  {
+
+    // get current user
+    $user = User::find(Auth::User()->id);
+    if (!$user) {
+      // return errors
+      return Redirect::back();
+    } else {
+
+      $rules = array(
+        'firstname'     => 'required',
+        'lastname'      => 'required',
+        'email'         => 'required|email'
+      );
+
+      $validator = Validator::make(Input::all(), $rules);
+
+      if ($validator->fails()) {
+        // return errors
+        return Redirect::back()
+        ->withErrors($validator) // send back all errors to the login form
+        ->withInput(Input::except('password')); // send back the input (not the password) so that we can repopulate the form
+
+      } else {
+        // store the user
+        $firstname = Input::get('firstname');
+        $lastname = Input::get('lastname');
+        $email = Input::get('email');
+
+        if (Input::has('password'))
+        {
+          $password = Input::get('password');
+          $hashedPassword = Hash::make($password);
+          $user->password = $hashedPassword;
+        }
+
+        $user->firstname = $firstname;
+        $user->lastname = $lastname;
+        $user->email = $email;
+
+        $user->save();
+
+        return Redirect::back()->with('status', 'Account updated');
+
+      }
+
+    }
+
+  }
+
+
+
   /**
   * Show the form for creating a new resource.
   *
